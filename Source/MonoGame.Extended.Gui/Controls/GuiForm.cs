@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using MonoGame.Extended.Input.InputListeners;
 using Microsoft.Xna.Framework.Input;
 
@@ -11,10 +7,13 @@ namespace MonoGame.Extended.Gui.Controls
     public class GuiForm : GuiStackPanel
     {
         public GuiForm()
-           : base() { }
+        {
+        }
 
         public GuiForm(GuiSkin skin)
-            : base(skin) { }
+            : base(skin)
+        {
+        }
 
         public override bool OnKeyPressed(IGuiContext context, KeyboardEventArgs args)
         {
@@ -41,6 +40,7 @@ namespace MonoGame.Extended.Gui.Controls
                     return true;
                 }
             }
+
             return base.OnKeyPressed(context, args);
         }
     }

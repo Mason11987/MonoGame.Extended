@@ -45,6 +45,7 @@
     <Compile Include="Collections\IPoolable.cs" />
     <Compile Include="Collections\KeyedCollection.cs" />
     <Compile Include="ColorExtensions.cs" />
+    <Compile Include="Entities\EntityComponentAttribute.cs" />
     <Compile Include="FloatHelper.cs" />
     <Compile Include="HslColor.cs" />
     <Compile Include="IRectangular.cs" />
@@ -61,7 +62,7 @@
     <Compile Include="Thickness.cs" />
     <Compile Include="BoundingRectangle.cs" />
     <Compile Include="Point2.cs" />
-    <Compile Include="Ray2D.cs" />
+    <Compile Include="Ray2.cs" />
     <Compile Include="PrimitivesHelper.cs" />
     <Compile Include="Segment2D.cs" />
     <Compile Include="Size2.cs" />
@@ -83,7 +84,7 @@
     <Compile Include="Collections\IObservableCollection.cs" />
     <Compile Include="Collections\ItemEventArgs.cs" />
     <Compile Include="IEquatableByRef.cs" />
-    <Compile Include="Matrix2D.cs" />
+    <Compile Include="Matrix2.cs" />
     <Compile Include="SimpleDrawableGameComponent.cs" />
     <Compile Include="SimpleGameComponent.cs" />
     <Compile Include="Collections\ObservableCollection.cs" />
@@ -95,7 +96,7 @@
     <Compile Include="Serialization\Size2JsonConverter.cs" />
     <Compile Include="IColorable.cs" />
     <Compile Include="Content\ContentManagerExtensions.cs" />
-    <Compile Include="Camera2D.cs" />
+    <Compile Include="OrthographicCamera.cs" />
     <Compile Include="Content\ContentReaderExtensions.cs" />
     <Compile Include="GameTimeExtensions.cs" />
     <Compile Include="IMovable.cs" />

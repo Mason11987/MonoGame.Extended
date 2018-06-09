@@ -38,16 +38,13 @@ using MonoGame.Extended.Collections;
 
 namespace MonoGame.Extended.Entities
 {
-    public abstract class EntityComponent : IPoolable
+    public abstract class PoolableComponent : IPoolable
     {
-        private ReturnToPoolDelegate _returnToPoolDelegate;
-
-        public Entity Entity { get; internal set; }
-
+        private ReturnToPoolDelegate _returnToPool;
         IPoolable IPoolable.NextNode { get; set; }
         IPoolable IPoolable.PreviousNode { get; set; }
 
-        protected EntityComponent()
+        protected PoolableComponent()
         {
         }
 
@@ -57,6 +54,7 @@ namespace MonoGame.Extended.Entities
 
         void IPoolable.Initialize(ReturnToPoolDelegate returnDelegate)
         {
+            _returnToPool = returnDelegate;
             Reset();
         }
 
@@ -69,20 +67,11 @@ namespace MonoGame.Extended.Entities
         {
             Reset();
 
-            if (_returnToPoolDelegate == null)
-            {
+            if (_returnToPool == null)
                 return;
-            }
 
-            Entity = null;
-
-            _returnToPoolDelegate.Invoke(this);
-            _returnToPoolDelegate = null;
-        }
-
-        public override string ToString()
-        {
-            return $"Entity: {Entity}";
+            _returnToPool.Invoke(this);
+            _returnToPool = null;
         }
     }
 }

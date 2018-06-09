@@ -21,6 +21,10 @@ namespace MonoGame.Extended.Gui
             Windows = new GuiWindowCollection(this) { ItemAdded = w => _isLayoutRequired = true };
         }
 
+        public virtual void Dispose()
+        {
+        }
+
         [JsonProperty(Order = 1)]
         public GuiSkin Skin { get; set; }
 
@@ -51,7 +55,7 @@ namespace MonoGame.Extended.Gui
 
         [JsonIgnore]
         public bool IsLayoutRequired { get { return _isLayoutRequired || Controls.Any(x => x.IsLayoutRequired); } }
-        private bool _isLayoutRequired = false;
+        private bool _isLayoutRequired;
 
         public virtual void Update(GameTime gameTime) { }
 
@@ -113,20 +117,8 @@ namespace MonoGame.Extended.Gui
 
         public override void SetBinding(string viewProperty, string viewModelProperty)
         {
-            foreach (var control in Controls) control.SetBinding(viewProperty, viewModelProperty);
-        }
-
-        protected virtual void Dispose(bool isDisposing)
-        {
-            if (isDisposing)
-            {
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            foreach (var control in Controls)
+                control.SetBinding(viewProperty, viewModelProperty);
         }
 
         public static GuiScreen FromStream(ContentManager contentManager, Stream stream, params Type[] customControlTypes)

@@ -40,19 +40,19 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MonoGame.Extended.Entities
 {
-    public abstract class EntitySystem
+    public abstract class ProcessingSystem
     {
         private TimeSpan _timer;
 
-        internal EntityComponentSystem Manager;
+        internal EntityComponentSystem EntityComponentSystem;
         public bool IsEnabled { get; set; }
-        public Game Game => Manager.Game;
-        public GraphicsDevice GraphicsDevice => Manager.GraphicsDevice;
-        public EntityManager EntityManager => Manager.EntityManager;
+        public Game Game => EntityComponentSystem.Game;
+        public GraphicsDevice GraphicsDevice => EntityComponentSystem.GraphicsDevice;
+        public EntityManager EntityManager => EntityComponentSystem.EntityManager;
 
         public TimeSpan ProcessingDelay { get; set; }
 
-        protected EntitySystem()
+        protected ProcessingSystem()
         {
             IsEnabled = true;
             _timer = TimeSpan.Zero;
