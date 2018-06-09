@@ -355,12 +355,13 @@ namespace MonoGame.Extended.Entities
         {
             Debug.Assert(entity != null);
             Debug.Assert(componentType != null);
-            Debug.Assert(componentType.Index < _entitiesToComponentsBag.Count);
+            if (componentType.Index >= _entitiesToComponentsBag.Count)
+                return null;
 
             var components = _entitiesToComponentsBag[componentType.Index];
 
 
-            EntityComponent component = null;
+            object component = null;
             components?.TryGetValue(entity, out component);
             return component;
         }
