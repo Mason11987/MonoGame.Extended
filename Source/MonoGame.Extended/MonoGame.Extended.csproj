@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Collections\Bag.cs" />
     <Compile Include="Collections\DictionaryExtensions.cs" />
+    <Compile Include="Collections\IPoolable.cs" />
     <Compile Include="Collections\KeyedCollection.cs" />
     <Compile Include="ColorExtensions.cs" />
     <Compile Include="FloatHelper.cs" />
@@ -93,7 +94,6 @@
     <Compile Include="Serialization\Vector2JsonConverter.cs" />
     <Compile Include="Serialization\Size2JsonConverter.cs" />
     <Compile Include="IColorable.cs" />
-    <Compile Include="Collections\IPoolable.cs" />
     <Compile Include="Content\ContentManagerExtensions.cs" />
     <Compile Include="Camera2D.cs" />
     <Compile Include="Content\ContentReaderExtensions.cs" />

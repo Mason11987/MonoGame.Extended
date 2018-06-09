@@ -171,30 +171,22 @@ namespace MonoGame.Extended.NuclexGui.Visuals.Flat
 
         /// <summary>Initializes a new gui visualizer from a skin stored as a resource</summary>
         /// <param name="serviceProvider">Game service provider containing the graphics device service</param>
-        /// <param name="skinJsonFile">Name of the Json file containing the skin description</param>
-        public static FlatGuiVisualizer FromResource(IServiceProvider serviceProvider, string skinJsonFile)
+        /// <param name="skinStream">Stream of skin</param>
+        public static FlatGuiVisualizer FromResource(IServiceProvider serviceProvider, Stream skinStream)
         {
-            var assembly = typeof(FlatGuiVisualizer).GetTypeInfo().Assembly;
-            var resources = assembly.GetManifestResourceNames();
+            var contentManager = new ContentManager(serviceProvider, "Content");
 
-            if (!resources.Contains(skinJsonFile))
-                throw new ArgumentException("Resource '" + skinJsonFile + "' not found", "skinJsonFile");
-
-            using (var skinStream = assembly.GetManifestResourceStream(skinJsonFile))
+            try
             {
-                var contentManager = new ContentManager(serviceProvider, "Content");
-
-                try
-                {
-                    return new FlatGuiVisualizer(contentManager, skinStream);
-                }
-                catch (Exception)
-                {
-                    contentManager.Dispose();
-                    throw;
-                }
+                return new FlatGuiVisualizer(contentManager, skinStream);
+            }
+            catch (Exception)
+            {
+                contentManager.Dispose();
+                throw;
             }
         }
+
 
         /// <summary>Container for a control and its absolute boundaries</summary>
         private struct ControlWithBounds

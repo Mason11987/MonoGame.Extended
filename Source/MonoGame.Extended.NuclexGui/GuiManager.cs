@@ -5,6 +5,7 @@ using MonoGame.Extended.NuclexGui.Input;
 using MonoGame.Extended.NuclexGui.Visuals;
 using MonoGame.Extended.NuclexGui.Visuals.Flat;
 using GameEventHandler = System.EventHandler<System.EventArgs>;
+using System.IO;
 
 namespace MonoGame.Extended.NuclexGui
 {
@@ -34,6 +35,8 @@ namespace MonoGame.Extended.NuclexGui
 
         /// <summary>Input service the GUI uses</summary>
         private IGuiInputService _inputService;
+
+        public Stream SkinStream;
 
         /// <summary>The GUI screen representing the desktop</summary>
         private GuiScreen _screen;
@@ -211,6 +214,7 @@ namespace MonoGame.Extended.NuclexGui
             // Set up a default input capturer if none was assigned by the user.
             // We only require an IInputService if the user doesn't use a custom input
             // capturer (which could be based on any other input library)
+            //string skinJsonPath = "MonoGame.Extended.NuclexGui.Resources.Skins.SuaveSkin.json"
             if (_inputCapturer == null)
             {
                 if (_inputService == null)
@@ -241,8 +245,7 @@ namespace MonoGame.Extended.NuclexGui
                 var services = new GameServiceContainer();
                 services.AddService(typeof(IGraphicsDeviceService), _graphicsDeviceService);
 
-                Visualizer = FlatGuiVisualizer.FromResource(services,
-                    "MonoGame.Extended.NuclexGui.Resources.Skins.SuaveSkin.json");
+                Visualizer = FlatGuiVisualizer.FromResource(services, SkinStream);
             }
         }
 

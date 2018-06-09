@@ -253,7 +253,7 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
         }
 
         /// <summary>Updates the size and position of the list's slider</summary>
-        private void UpdateSlider()
+        public void UpdateSlider()
         {
             if ((Screen != null) && (_listRowLocator != null))
             {
