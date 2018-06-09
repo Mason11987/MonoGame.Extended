@@ -39,6 +39,10 @@ namespace MonoGame.Extended.NuclexGui.Visuals.Flat
 
         /// <summary>Batches GUI elements for faster drawing</summary>
         private SpriteBatch _spriteBatch;
+        public SpriteBatch SpriteBatch
+        {
+            get => _spriteBatch;
+        }
 
         /// <summary>Initializes a new gui painter</summary>
         /// <param name="contentManager">

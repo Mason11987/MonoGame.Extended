@@ -69,5 +69,7 @@ namespace MonoGame.Extended.NuclexGui.Visuals.Flat
         /// <param name="position">Position of which to determien the closest gap</param>
         /// <returns>The index of the gap the position is closest to</returns>
         int GetClosestOpening(string frameName, RectangleF bounds, string text, Vector2 position);
+
+        SpriteBatch SpriteBatch { get; }
     }
 }
