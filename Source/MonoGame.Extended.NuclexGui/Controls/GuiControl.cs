@@ -78,6 +78,9 @@ namespace MonoGame.Extended.NuclexGui.Controls
         /// <summary>Location and extents of the control</summary>
         public UniRectangle Bounds;
 
+        /// <summary>Whether the control is visible</summary>
+        public bool Visible = true;
+
         /// <summary>Children of the control</summary>
         public Collection<GuiControl> Children => _children;
 
@@ -254,6 +257,7 @@ namespace MonoGame.Extended.NuclexGui.Controls
         /// </summary>
         protected virtual void OnMouseLeft(float x, float y)
         {
+            MouseLeft?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

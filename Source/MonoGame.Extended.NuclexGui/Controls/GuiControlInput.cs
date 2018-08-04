@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
 
@@ -23,6 +25,8 @@ namespace MonoGame.Extended.NuclexGui.Controls
 
         /// <summary>Whether any keys, mouse buttons or game pad buttons are beind held pressed</summary>
         private bool AnyKeysOrButtonsPressed => (_heldMouseButtons != 0) || (_heldKeyCount > 0) || (_heldButtonCount > 0);
+
+        public event EventHandler MouseLeft;
 
         /// <summary>Called when a button on the game pad has been pressed</summary>
         /// <param name="button">Button that has been pressed</param>
@@ -64,7 +68,7 @@ namespace MonoGame.Extended.NuclexGui.Controls
 
             // Nope, we have to ask our children to find a control that feels responsible.
             var encounteredOrderingControl = false;
-            foreach (var child in _children)
+            foreach (var child in _children.Where(child => child.Visible))
             {
                 // We only process one child that has the affectsOrdering field set. This
                 // ensures that key presses will not be delivered to windows sitting behind
@@ -137,8 +141,7 @@ namespace MonoGame.Extended.NuclexGui.Controls
             {
                 if (_mouseOverControl != this)
                     _mouseOverControl.ProcessMouseLeave(x, y);
-                else
-                    OnMouseLeft(x, y);
+                 OnMouseLeft(x, y);
 
                 _mouseOverControl = null;
             }
@@ -264,7 +267,7 @@ namespace MonoGame.Extended.NuclexGui.Controls
 
             // Check whether the mouse is hovering over one of our children and if so,
             // pass on the mouse movement notification to the child.
-            foreach (var control in _children)
+            foreach (var control in _children.Where(child => child.Visible))
             {
                 var childBounds = control.Bounds.ToOffset(size.X, size.Y);
 

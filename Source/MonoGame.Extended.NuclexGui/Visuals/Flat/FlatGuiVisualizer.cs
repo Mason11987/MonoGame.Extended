@@ -73,6 +73,8 @@ namespace MonoGame.Extended.NuclexGui.Visuals.Flat
                     var currentControl = controlWithBounds.Control;
                     var currentBounds = controlWithBounds.Bounds;
 
+                    if (!currentControl.Visible)
+                        continue;
                     // Add the controls in normal order, so the first control in the collection will
                     // be taken off the stack last, ensuring it's rendered on top of all others.
                     for (var index = 0; index < currentControl.Children.Count; ++index)
