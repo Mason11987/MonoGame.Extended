@@ -20,7 +20,7 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
     }
 
     /// <summary>List showing a sequence of items</summary>
-    public class GuiListControl : GuiControl, IFocusable
+    public class GuiListControl : GuiPressableControl, IFocusable
     {
         /// <summary>Items contained in the list</summary>
         private readonly ObservableCollection<string> _items;
@@ -42,6 +42,16 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
 
         /// <summary>Slider the lists uses to scroll through its items</summary>
         private readonly GuiVerticalSliderControl _slider;
+
+        /// <summary>Will be triggered when the button is pressed</summary>
+        public event EventHandler Pressed;
+
+        /// <summary>Called when the button is pressed</summary>
+        protected override void OnPressed()
+        {
+            if (Pressed != null)
+                Pressed(this, EventArgs.Empty);
+        }
 
         public GuiListControl()
         {
