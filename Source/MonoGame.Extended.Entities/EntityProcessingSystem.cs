@@ -58,10 +58,13 @@ namespace MonoGame.Extended.Entities
             var contains = entity.SystemBits[Index];
             var isInterested = Aspect.Matches(entity.ComponentBits);
 
-            if (contains)
+            if (contains && !isInterested)
                 Remove(entity);
-            else if (isInterested)
+            else if (isInterested && !contains)
                 Add(entity);
+
+            if (contains && entity.WaitingToBeRemoved)
+                Remove(entity);
         }
 
         public virtual void OnEntityAdded(Entity entity) { }
