@@ -18,7 +18,7 @@ namespace MonoGame.Extended.NuclexGui.Visuals.Flat.Renderers
             var frameName = "label";
             if (control.Style != null) frameName = control.Style;
 
-            graphics.DrawString(frameName, control.GetAbsoluteBounds(), control.Text);
+            graphics.DrawString(frameName, control.GetAbsoluteBounds(), control.Text ?? "");
         }
     }
 }
