@@ -79,8 +79,8 @@ namespace MonoGame.Extended.NuclexGui.Visuals.Flat
                     // be taken off the stack last, ensuring it's rendered on top of all others.
                     for (var index = 0; index < currentControl.Children.Count; ++index)
                         _controlStack.Push(ControlWithBounds.FromControl(currentControl.Children[index], currentBounds));
-
-                    RenderControl(currentControl);
+                    if (currentControl.Screen != null)
+                        RenderControl(currentControl);
                 }
             }
             finally

@@ -78,6 +78,8 @@ namespace MonoGame.Extended.NuclexGui.Controls
         /// <param name="controlIndex">Index of the control that will be moved to the start of the list.</param>
         internal void MoveToStart(int controlIndex)
         {
+            if (controlIndex == 0) //Do nothing if already at start
+                return;
             var control = base[controlIndex];
 
             // We explicitely circumvent the additional logic for adding and removing items
