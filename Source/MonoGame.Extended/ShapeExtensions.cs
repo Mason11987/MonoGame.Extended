@@ -75,7 +75,7 @@ namespace MonoGame.Extended
             var length = Vector2.Distance(point1, point2);
             var angle = (float) Math.Atan2(point2.Y - point1.Y, point2.X - point1.X);
             var scale = new Vector2(length, thickness);
-            spriteBatch.Draw(texture, point1, color: color, rotation: angle, scale: scale);
+            spriteBatch.Draw(texture, point1, null, color, angle, Vector2.Zero, scale, SpriteEffects.None, 0);
         }
 
         /// <summary>
@@ -110,8 +110,7 @@ namespace MonoGame.Extended
         /// <param name="width">Width</param>
         /// <param name="height">Height</param>
         /// <param name="color">The color to draw the rectangle in</param>
-        public static void FillRectangle(this SpriteBatch spriteBatch, float x, float y, float width, float height,
-            Color color)
+        public static void FillRectangle(this SpriteBatch spriteBatch, float x, float y, float width, float height, Color color)
         {
             FillRectangle(spriteBatch, new Vector2(x, y), new Size2(width, height), color);
         }
@@ -123,8 +122,7 @@ namespace MonoGame.Extended
         /// <param name="rectangle">The rectangle to draw</param>
         /// <param name="color">The color to draw the rectangle in</param>
         /// <param name="thickness">The thickness of the lines</param>
-        public static void DrawRectangle(this SpriteBatch spriteBatch, RectangleF rectangle, Color color,
-            float thickness = 1f)
+        public static void DrawRectangle(this SpriteBatch spriteBatch, RectangleF rectangle, Color color, float thickness = 1f)
         {
             var texture = GetTexture(spriteBatch);
             var topLeft = new Vector2(rectangle.X, rectangle.Y);
@@ -133,14 +131,14 @@ namespace MonoGame.Extended
             var horizontalScale = new Vector2(rectangle.Width, thickness);
             var verticalScale = new Vector2(thickness, rectangle.Height);
 
-            spriteBatch.Draw(texture, topLeft, scale: horizontalScale, color: color);
-            spriteBatch.Draw(texture, topLeft, scale: verticalScale, color: color);
-            spriteBatch.Draw(texture, topRight, scale: verticalScale, color: color);
-            spriteBatch.Draw(texture, bottomLeft, scale: horizontalScale, color: color);
+            spriteBatch.Draw(texture, topLeft, null, color, 0f, Vector2.Zero, horizontalScale, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, topLeft, null, color, 0f, Vector2.Zero, verticalScale, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, topRight, null, color, 0f, Vector2.Zero, verticalScale, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, bottomLeft, null, color, 0f, Vector2.Zero, horizontalScale, SpriteEffects.None, 0);
         }
 
         /// <summary>
-        ///     Draws a rectangle with the thickness provided
+        /// Draws a rectangle with the thickness provided
         /// </summary>
         /// <param name="spriteBatch">The destination drawing surface</param>
         /// <param name="location">Where to draw</param>
@@ -151,6 +149,15 @@ namespace MonoGame.Extended
             float thickness = 1f)
         {
             DrawRectangle(spriteBatch, new RectangleF(location.X, location.Y, size.Width, size.Height), color, thickness);
+        }
+
+
+        /// <summary>
+        /// Draws a rectangle outline.
+        /// </summary>
+        public static void DrawRectangle(this SpriteBatch spriteBatch, float x, float y, float width, float height, Color color, float thickness = 1f)
+        {
+            DrawRectangle(spriteBatch, new RectangleF(x, y, width, height), color, thickness);
         }
 
         /// <summary>
@@ -221,7 +228,7 @@ namespace MonoGame.Extended
         {
             var scale = Vector2.One*size;
             var offset = new Vector2(0.5f) - new Vector2(size*0.5f);
-            spriteBatch.Draw(GetTexture(spriteBatch), position + offset, color: color, scale: scale);
+            spriteBatch.Draw(GetTexture(spriteBatch), position + offset, null, color, 0f, Vector2.Zero, scale, SpriteEffects.None, 0);
         }
 
         /// <summary>

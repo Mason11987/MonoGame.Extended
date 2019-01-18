@@ -16,17 +16,16 @@ namespace MonoGame.Extended.Tiled.Renderers
 
         private IEnumerable<TiledMapLayerModel> CreateLayerModels(TiledMap map, TiledMapLayer layer)
         {
-            var tileLayer = layer as TiledMapTileLayer;
+			switch(layer)
+			{
+				case TiledMapTileLayer tileLayer:
+					return CreateTileLayerModels(map, tileLayer);
+				case TiledMapImageLayer imageLayer:
+					return CreateImageLayerModels(imageLayer);
+				default:
+					return new List<TiledMapLayerModel>();
+			}
 
-            if (tileLayer != null)
-                return CreateTileLayerModels(map, tileLayer);
-
-            var imageLayer = layer as TiledMapImageLayer;
-
-            if (imageLayer != null)
-                return CreateImageLayerModels(imageLayer);
-
-            return new List<TiledMapLayerModel>();
         }
 
         private IEnumerable<TiledMapLayerModel> CreateImageLayerModels(TiledMapImageLayer imageLayer)
@@ -44,12 +43,14 @@ namespace MonoGame.Extended.Tiled.Renderers
 
             foreach (var tileset in map.Tilesets)
             {
+				var firstGlobalIdentifier = map.GetTilesetFirstGlobalIdentifier(tileset);
+				var lastGlobalIdentifier = tileset.TileCount + firstGlobalIdentifier - 1;
                 var texture = tileset.Texture;
 
-                foreach (var tile in tileLayer.Tiles.Where(t => tileset.ContainsGlobalIdentifier(t.GlobalIdentifier)))
+                foreach (var tile in tileLayer.Tiles.Where(t => firstGlobalIdentifier <= t.GlobalIdentifier && t.GlobalIdentifier <= lastGlobalIdentifier))
                 {
                     var tileGid = tile.GlobalIdentifier;
-                    var localTileIdentifier = tileGid - tileset.FirstGlobalIdentifier;
+                    var localTileIdentifier = tileGid - firstGlobalIdentifier;
                     var position = GetTilePosition(map, tile);
                     var tilesetColumns = tileset.Columns == 0 ? 1 : tileset.Columns; // fixes a problem (what problem exactly?)
                     var sourceRectangle = TiledMapHelper.GetTileSourceRectangle(localTileIdentifier, tileset.TileWidth, tileset.TileHeight, tilesetColumns, tileset.Margin, tileset.Spacing);
@@ -57,9 +58,8 @@ namespace MonoGame.Extended.Tiled.Renderers
 
                     // animated tiles
                     var tilesetTile = tileset.Tiles.FirstOrDefault(x => x.LocalTileIdentifier == localTileIdentifier);
-                    var animatedTilesetTile = tilesetTile as TiledMapTilesetAnimatedTile;
 
-                    if (animatedTilesetTile != null)
+                    if (tilesetTile is TiledMapTilesetAnimatedTile animatedTilesetTile)
                     {
                         animatedLayerBuilder.AddSprite(texture, position, sourceRectangle, flipFlags);
                         animatedLayerBuilder.AnimatedTilesetTiles.Add(animatedTilesetTile);
@@ -88,15 +88,23 @@ namespace MonoGame.Extended.Tiled.Renderers
 
         public TiledMapModel Build(TiledMap map)
         {
-            var layersOfLayerModels = map.Layers
-                .Select(layer => CreateLayerModels(map, layer))
-                .Select(models => models.ToArray())
-                .ToArray();
+			var dictionary = new Dictionary<TiledMapLayer, TiledMapLayerModel[]>();
+			foreach (var layer in map.Layers)
+				BuildLayer(map, layer, dictionary);
 
-            return new TiledMapModel(map, layersOfLayerModels);
+            return new TiledMapModel(map, dictionary);
         }
 
-        private static Point2 GetTilePosition(TiledMap map, TiledMapTile mapTile)
+		private void BuildLayer(TiledMap map, TiledMapLayer layer, Dictionary<TiledMapLayer, TiledMapLayerModel[]> dictionary)
+		{
+			if (layer is TiledMapGroupLayer groupLayer)
+				foreach (var subLayer in groupLayer.Layers)
+					BuildLayer(map, subLayer, dictionary);
+			else
+				dictionary.Add(layer, CreateLayerModels(map, layer).ToArray());
+		}
+
+		private static Point2 GetTilePosition(TiledMap map, TiledMapTile mapTile)
         {
             switch (map.Orientation)
             {
@@ -104,10 +112,8 @@ namespace MonoGame.Extended.Tiled.Renderers
                     return TiledMapHelper.GetOrthogonalPosition(mapTile.X, mapTile.Y, map.TileWidth, map.TileHeight);
                 case TiledMapOrientation.Isometric:
                     return TiledMapHelper.GetIsometricPosition(mapTile.X, mapTile.Y, map.TileWidth, map.TileHeight);
-                case TiledMapOrientation.Staggered:
-                    throw new NotImplementedException("Staggered maps are not yet implemented.");
                 default:
-                    throw new NotSupportedException($"Tiled Map {map.Orientation} is not supported.");
+                    throw new NotSupportedException($"{map.Orientation} Tiled Maps are not yet implemented.");
             }
         }
     }

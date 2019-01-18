@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
+using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 using MonoGame.Extended.Tiled;
+using MonoGame.Extended.Tiled.Serialization;
 
 namespace MonoGame.Extended.Content.Pipeline.Tiled
 {
     [ContentTypeWriter]
-    public class TiledMapWriter : ContentTypeWriter<TiledMapContent>
+    public class TiledMapWriter : ContentTypeWriter<TiledMapContentItem>
     {
-        protected override void Write(ContentWriter writer, TiledMapContent map)
+        private TiledMapContentItem _contentItem;
+
+        protected override void Write(ContentWriter writer, TiledMapContentItem contentItem)
         {
+            _contentItem = contentItem;
+
+            var map = contentItem.Data;
+
             try
             {
                 WriteMetaData(writer, map);
@@ -23,7 +29,6 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
             }
             catch (Exception ex)
             {
-                ContentLogger.Logger.LogImportantMessage("Wtf");
                 ContentLogger.Logger.LogImportantMessage(ex.StackTrace);
                 throw;
             }
@@ -41,51 +46,31 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
             writer.WriteTiledMapProperties(map.Properties);
         }
 
-        private static void WriteTilesets(ContentWriter writer, IReadOnlyCollection<TiledMapTilesetContent> tilesets)
+        private void WriteTilesets(ContentWriter writer, IReadOnlyCollection<TiledMapTilesetContent> tilesets)
         {
             writer.Write(tilesets.Count);
+
             foreach (var tileset in tilesets)
                 WriteTileset(writer, tileset);
         }
 
-        private static void WriteTileset(ContentWriter writer, TiledMapTilesetContent tileset)
+        private void WriteTileset(ContentWriter writer, TiledMapTilesetContent tileset)
         {
-            writer.Write(Path.ChangeExtension(tileset.Image.Source, null));
             writer.Write(tileset.FirstGlobalIdentifier);
-            writer.Write(tileset.TileWidth);
-            writer.Write(tileset.TileHeight);
-            writer.Write(tileset.TileCount);
-            writer.Write(tileset.Spacing);
-            writer.Write(tileset.Margin);
-            writer.Write(tileset.Columns);
-            writer.Write(tileset.Tiles.Count);
 
-            foreach (var tilesetTile in tileset.Tiles)
-                WriteTilesetTile(writer, tilesetTile);
-
-            writer.WriteTiledMapProperties(tileset.Properties);
+			if (!string.IsNullOrWhiteSpace(tileset.Source))
+			{
+				writer.Write(true);
+				writer.WriteExternalReference(_contentItem.GetExternalReference<TiledMapTilesetContent>(tileset.Source));
+			}
+			else
+			{
+				writer.Write(false);
+				TiledMapTilesetWriter.WriteTileset(writer, tileset, _contentItem);
+			}
         }
 
-        private static void WriteTilesetTile(ContentWriter writer, TiledMapTilesetTileContent tilesetTile)
-        {
-            writer.Write(tilesetTile.LocalIdentifier);
-            writer.Write(tilesetTile.Type);
-            writer.Write(tilesetTile.Frames.Count);
-            writer.Write(tilesetTile.Objects.Count);
-
-            foreach (var @object in tilesetTile.Objects)
-                WriteObject(writer, @object);
-
-            foreach (var frame in tilesetTile.Frames)
-            {
-                writer.Write(frame.TileIdentifier);
-                writer.Write(frame.Duration);
-            }
-
-            writer.WriteTiledMapProperties(tilesetTile.Properties);
-        }
-
-        private static void WriteLayers(ContentWriter writer, IReadOnlyCollection<TiledMapLayerContent> layers)
+        private void WriteLayers(ContentWriter writer, IReadOnlyCollection<TiledMapLayerContent> layers)
         {
             writer.Write(layers.Count);
 
@@ -93,7 +78,7 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
                 WriteLayer(writer, layer);
         }
 
-        private static void WriteLayer(ContentWriter writer, TiledMapLayerContent layer)
+        private void WriteLayer(ContentWriter writer, TiledMapLayerContent layer)
         {
             writer.Write((byte)layer.Type);
 
@@ -116,15 +101,18 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
                 case TiledMapLayerType.ObjectLayer:
                     WriteObjectLayer(writer, (TiledMapObjectLayerContent)layer);
                     break;
+				case TiledMapLayerType.GroupLayer:
+					WriteLayers(writer, ((TiledMapGroupLayerContent)layer).Layers);
+					break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layer.Type));
             }
         }
 
-        private static void WriteImageLayer(ContentWriter writer, TiledMapImageLayerContent imageLayer)
+        private void WriteImageLayer(ContentWriter writer, TiledMapImageLayerContent imageLayer)
         {
-            var textureAssetName = Path.ChangeExtension(imageLayer.Image.Source, null);
-            writer.Write(textureAssetName);
+            var externalReference = _contentItem.GetExternalReference<Texture2DContent>(imageLayer.Image.Source);
+            writer.WriteExternalReference(externalReference);
             writer.Write(new Vector2(imageLayer.X, imageLayer.Y));
         }
 
@@ -228,14 +216,8 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
             return TiledMapObjectType.Rectangle;
         }
         
-        public override string GetRuntimeType(TargetPlatform targetPlatform)
-        {
-            return "MonoGame.Extended.Tiled.TiledMap, MonoGame.Extended.Tiled";
-        }
+        public override string GetRuntimeType(TargetPlatform targetPlatform) => "MonoGame.Extended.Tiled.TiledMap, MonoGame.Extended.Tiled";
 
-        public override string GetRuntimeReader(TargetPlatform targetPlatform)
-        {
-            return "MonoGame.Extended.Tiled.TiledMapReader, MonoGame.Extended.Tiled";
-        }
+        public override string GetRuntimeReader(TargetPlatform targetPlatform) => "MonoGame.Extended.Tiled.TiledMapReader, MonoGame.Extended.Tiled";
     }
 }

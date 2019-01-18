@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.Collections;
-using MonoGame.Extended.Input.InputListeners;
+using MonoGame.Extended.Input;
 
 namespace MonoGame.Extended.NuclexGui.Controls.Desktop
 {
@@ -65,11 +65,13 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
             _selectedItems.ItemAdded += SelectionAdded;
             _selectedItems.ItemRemoved += SelectionRemoved;
 
-            _slider = new GuiVerticalSliderControl();
-            _slider.Bounds = new UniRectangle(
-                new UniScalar(1.0f, -20.0f), new UniScalar(0.0f, 0.0f),
-                new UniScalar(0.0f, 20.0f), new UniScalar(1.0f, 0.0f)
-            );
+            _slider = new GuiVerticalSliderControl
+            {
+                Bounds = new UniRectangle(
+                    new UniScalar(1.0f, -20.0f), new UniScalar(0.0f, 0.0f),
+                    new UniScalar(0.0f, 20.0f), new UniScalar(1.0f, 0.0f)
+                )
+            };
             Children.Add(_slider);
         }
 
@@ -208,8 +210,7 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
         /// <summary>Called when the selected items in the list have changed</summary>
         protected virtual void OnSelectionChanged()
         {
-            if (SelectionChanged != null)
-                SelectionChanged(this, EventArgs.Empty);
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>Called when an item is removed from the items list</summary>

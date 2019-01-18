@@ -5,16 +5,14 @@ namespace MonoGame.Extended
 {
     public abstract class SimpleDrawableGameComponent : SimpleGameComponent, IDrawable
     {
-        private int _drawOrder;
-        private bool _isVisible;
-
         protected SimpleDrawableGameComponent()
         {
         }
 
+        private bool _isVisible = true;
         public bool Visible
         {
-            get { return _isVisible; }
+            get => _isVisible;
             set
             {
                 if (_isVisible == value)
@@ -27,9 +25,10 @@ namespace MonoGame.Extended
 
         bool IDrawable.Visible => _isVisible;
 
+        private int _drawOrder;
         public int DrawOrder
         {
-            get { return _drawOrder; }
+            get => _drawOrder;
             set
             {
                 if (_drawOrder == value)
@@ -44,13 +43,5 @@ namespace MonoGame.Extended
         public event EventHandler<EventArgs> VisibleChanged;
 
         public abstract void Draw(GameTime gameTime);
-
-        protected virtual void LoadContent()
-        {
-        }
-
-        protected virtual void UnloadContent()
-        {
-        }
     }
 }
