@@ -69,7 +69,14 @@ namespace MonoGame.Extended.NuclexGui.Visuals.Flat.Renderers
                     if (control.SelectedItems.Contains(item))
                         graphics.DrawElement("list.selection", itemBounds);
 
-                    graphics.DrawString(_style, itemBounds, control.Items[item]);
+                    try
+                    { // If items are removed between when lastItem is set and this, this throws index out of range
+                        graphics.DrawString(_style, itemBounds, control.Items[item]);
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
                     itemBounds.Y += rowHeight;
                 }
             }
